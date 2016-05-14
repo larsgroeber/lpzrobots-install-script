@@ -2,7 +2,7 @@
 
 Here you find a small number of unofficial installation-scripts for the [lpzrobots](http://robot.informatik.uni-leipzig.de/software/) environment.
 
-The script is a fancy (or easier) way of doing the following in order:
+The script is a fancy way of doing the following in order including some sanity-checks:
 
 	mkdir LpzRobots
 	cd LpzRobots
@@ -16,11 +16,12 @@ The script is a fancy (or easier) way of doing the following in order:
 	libqt4-opengl-dev qt4-qmake libqt4-qt3support gnuplot gnuplot-x11 libncurses5-dev
 	make
 	sudo make all
+	sudo ln -sf PATH-TO-LpzRobots/lpzrobots-master/opende/ode/src/.libs/libode_dbl.so.1 /lib/libode_dbl.so.1
 
 ## Usage
 
 1. Download the zip-archive or clone the repository to your hard-drive
-2. Use `chmod +x install-YOURDISTRO.sh` to make the script executable
+2. Use `chmod +x install-YOURDISTRO.sh` to make the script executable if it is not already
 3. Run `./install-YOURDISTRO.sh` (you will need root permissions)
 4. Follow the instructions
 
