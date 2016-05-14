@@ -161,7 +161,7 @@ read ans
 if [[ $ans == "n" ]]; then
 	printf "Ok, exiting. Have a nice day!\n"
 	exit 0
-elif [[ $ans == "Y" || $ans == "y" ]]; then
+elif [[ $ans == "Y" || $ans == "y" || -z $ans ]]; then
 	break
 else
 	printf "Sorry, did not catch that!\n\n"
@@ -173,17 +173,23 @@ printf "OK, the robot-examble 'basic' will be compiled and started. If there is 
 
 read ans
 
+# enter basic-example directory
 cd ${location}/LpzRobots/lpzrobots-master/ode_robots/examples/basic
 
 chExitStatus
 
+# compile the example
 make
 
 chExitStatus
 
+# start the example
 ${location}/LpzRobots/lpzrobots-master/ode_robots/examples/basic/start
 
+# wait for simulation to end
 wait 
 
-printf "Have a nice day!\n"
+chExitStatus
+
+printf "\nHave a nice day!\n"
 exit 0
