@@ -146,6 +146,44 @@ wait
 # check if build process was successful
 chExitStatus
 
+# make symlink
+sudo ln -sf ${location}/LpzRobots/lpzrobots-master/opende/ode/src/.libs/libode_dbl.so.1 /lib/libode_dbl.so.1
+
 # show user success message (is also displayed if user cancels build-process)
-printf "\nThat should be it, lpzrobots is now installed.\nHave a nice day!\n"
+printf "\nThat should be it, lpzrobots is now installed.\n"
+
+while true; do
+printf "Do you want to test if the program is installed correctly? [n/Y]"
+
+read ans
+
+# again check answer
+if [[ $ans == "n" ]]; then
+	printf "Ok, exiting. Have a nice day!\n"
+	exit 0
+elif [[ $ans == "Y" || $ans == "y" ]]; then
+	break
+else
+	printf "Sorry, did not catch that!\n\n"
+	continue
+fi
+done
+
+printf "OK, the robot-examble 'basic' will be compiled and started. If there is no error message and a window with a basic robot-simulation opens everything works.\nPlease press ENTER.\n"
+
+read ans
+
+cd ${location}/LpzRobots/lpzrobots-master/ode_robots/examples/basic
+
+chExitStatus
+
+make
+
+chExitStatus
+
+${location}/LpzRobots/lpzrobots-master/ode_robots/examples/basic/start
+
+wait 
+
+printf "Have a nice day!\n"
 exit 0
