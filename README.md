@@ -1,6 +1,21 @@
 # lpzrobots-install Script
 
-Here you find a small number of (unofficial) installation-scripts for the [lpzrobots](http://robot.informatik.uni-leipzig.de/software/) environment.
+Here you find a small number of unofficial installation-scripts for the [lpzrobots](http://robot.informatik.uni-leipzig.de/software/) environment.
+
+The script is a fancy (or easier) way of doing the following in order:
+
+	mkdir LpzRobots
+	cd LpzRobots
+	wget https://github.com/georgmartius/lpzrobots/archive/master.zip
+	unzip master.zip
+	cd lpzrobots-master
+	sudo apt-get update
+	sudo apt-get install build-essential
+	sudo apt-get install g++ make automake libtool xutils-dev m4 libreadline-dev libgsl0-dev \
+	libglu-dev libgl1-mesa-dev freeglut3-dev libopenscenegraph-dev libqt4-dev libqt4-opengl \
+	libqt4-opengl-dev qt4-qmake libqt4-qt3support gnuplot gnuplot-x11 libncurses5-dev
+	make
+	sudo make all
 
 ## Usage
 
