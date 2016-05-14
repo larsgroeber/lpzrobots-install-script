@@ -18,6 +18,8 @@ The script is a fancy way of doing the following in order including some sanity-
 	sudo make all
 	sudo ln -sf PATH-TO-LpzRobots/lpzrobots-master/opende/ode/src/.libs/libode_dbl.so.1 /lib/libode_dbl.so.1
 
+At the end the script checks if the installation was successful by starting one of the examples included with the lpzrobots-files.
+
 ## Usage
 
 1. Download the zip-archive or clone the repository to your hard-drive
