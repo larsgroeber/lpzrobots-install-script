@@ -4,8 +4,8 @@ Here you find a small number of (unofficial) installation-scripts for the [lpzro
 
 ## Usage
 
-1. Download the script for your distro
-2. Use `chmod +x install-YOURDISTRO.sh` to make it executable
+1. Download the zip-archive or clone the repository to your hard-drive
+2. Use `chmod +x install-YOURDISTRO.sh` to make the script executable
 3. Run `./install-YOURDISTRO.sh` (you will need root permissions)
 4. Follow the instructions
 
