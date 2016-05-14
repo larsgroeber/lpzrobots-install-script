@@ -1,4 +1,4 @@
-# lpzrobots-install Script
+# Lpzrobots installation script
 
 Here you find a small number of unofficial installation-scripts for the [lpzrobots](http://robot.informatik.uni-leipzig.de/software/) environment.
 
