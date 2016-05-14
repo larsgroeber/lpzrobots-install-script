@@ -30,7 +30,7 @@ fi
 }
 
 # ask the user in which directory the files should go
-while [[ true ]]; do
+while true; do
 printf "\nIn which directory should the program be downloaded and compiled? ('/LpzRobots' \
 will be added to the end of the path, don't use '~') [/home/${USER}/Downloads]\n"
 
@@ -194,6 +194,7 @@ done
 printf "\nOk, the robot-example 'basic' will be compiled and started. If there is no error message and a window \
 with a basic robot-simulation opens everything works fine.\nPlease press ENTER.\n"
 
+# wait for user to press ENTER
 read ans
 
 # enter basic-example directory
@@ -218,6 +219,8 @@ printf "\nThat's it! Have a nice day.\n"
 
 sleep 5
 
+
+# ToDo: clean up .zip files?
 
 
 ######  End  ######
