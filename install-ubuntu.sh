@@ -1,6 +1,17 @@
 #!/bin/bash
 
+# this script downloads and installs
+# 	the lpzrobots-environment
+# 	all necessary packages for compiling and building it
+#
+# more information and the license used can be found here: 
+# https://github.com/Larsg7/lpzrobots-install
+
+
+# first clear the screen
 clear
+
+# display some information about the program to the user
 printf "\nThis script will download and install the lpzrobots-environment for you.\n\n"
 printf "It has been tested on Ubuntu 14.04. Default values are in '[]' and/or capitalized, \
 just press ENTER to use them.\n\n"
@@ -10,31 +21,32 @@ printf "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND.\n"
 # small function to check exit-status ToDo: show last command
 function chExitStatus {
 	if [[ ! $? -eq 0 ]]; then
-	printf "\nSomething went wrong while running the last command. - ABORT"
+	printf "\nSomething went wrong while running the last command. - ABORT\n"
 	exit 1
 fi
 }
 
-# start with asking the user in which directory the files should go
+# ask the user in which directory the files should go
 while [[ true ]]; do
-printf "\nIn which directory should the program be downloaded and compiled ('/LpzRobots' \
-will be added to the end of the path)? [/home/${USER}/Downloads]\n"
+printf "\nIn which directory should the program be downloaded and compiled? ('/LpzRobots' \
+will be added to the end of the path, don't use '~') [/home/${USER}/Downloads]\n"
 
+# read the answer from the command line
 read location
 
-# if location is empty take default value
+# if location is empty take default value otherwise just keep the input
 if [[ -z $location ]]; then
 	location="/home/${USER}/Downloads"
 fi
 
-# check if location exists
+# check if $location exists, is a directory and if we have read/write access
 if [[ ! -d $location || ! -w $location ]]; then
 	printf "Directory does not exist or you do not have read/write-access! \nChoose another one.\n"
 	continue
 fi
 
 # ask user for confirmation
-printf "The lpzrobots-files will now be downloaded into the directory ${location}/LpzRobots.\n Is this OK? [n/Y]\n"
+printf "\nThe lpzrobots-files will now be downloaded into the directory ${location}/LpzRobots.\nIs this OK? [n/Y]\n"
 
 read ans
 
@@ -43,15 +55,15 @@ if [[ $ans == "n" ]]; then
 	echo
 	continue
 elif [[ $ans == "" || $ans == "Y" ]]; then
-	echo "OK, continuing."
+	printf "OK, continuing.\n"
 	break
 else
-	echo "Sorry, did not catch that!"
-	echo
+	printf "Sorry, did not catch that!\n\n"
 	continue
 fi
 
 done
+
 
 # move into the directory the user has specified
 cd $location
@@ -68,9 +80,10 @@ wget https://github.com/georgmartius/lpzrobots/archive/master.zip
 printf "Unzipping content.\n\n"
 unzip master.zip
 
-# check if directory existed
+# check if directory exists
 if [[ ! -e lpzrobots-master ]]; then
-	printf "\nSorry, something went wrong with the downloading or unzipping process \n('lpzrobots-master'-directory does not exist). - ABORT"
+	printf "\nSorry, something went wrong downloading or unzipping the files \
+('lpzrobots-master'-directory does not exist). - ABORT\n"
 	exit 1
 fi
 
@@ -79,11 +92,12 @@ cd lpzrobots-master
 
 printf "\nMaking sure essentials are installed.\n"
 sudo apt-get update
-
-chExitStatus
+# no checking here because "apt-get update" can produce non-critical errors
+# e.g. non-critical repository not found
 
 sudo apt-get install build-essential
 
+# check if packages "build-essentials" are installed correctly
 chExitStatus
 
 printf "Installing necessary packages for compiling.\n\n"
@@ -94,6 +108,28 @@ libqt4-opengl-dev qt4-qmake libqt4-qt3support gnuplot gnuplot-x11 libncurses5-de
 # check if all packages were installed correctly
 chExitStatus
 
+printf "\nAll packages necessary for compiling are now installed.\n"
+
+# ask user if they want to continue with the compile process
+while true; do
+printf "The next command will compile the program, it will take a long time to finish. \nDo you want to continue? (write no/yes)\n"
+
+read ans
+
+# again check answer
+if [[ $ans == "no" ]]; then
+	echo "Exiting."
+	exit 0
+elif [[ $ans == "yes" ]]; then
+	printf "OK, continuing.\n\n"
+	break
+else
+	printf "Sorry, did not catch that!\n\n"
+	continue
+fi
+done
+
+
 printf "\nStarting the make-process.\n"	
 make
 
@@ -101,24 +137,6 @@ wait
 
 # check if make process was successful
 chExitStatus
-
-# ask user if they want to continue with the build process
-while true; do
-printf "\nThe next command will compile the program, it will take a long time to finish. \nDo you want to continue? (write n/yes)\n"
-
-read ans
-
-if [[ $ans == "n" ]]; then
-	echo "Exiting."
-	exit 0
-elif [[ $ans == "yes" ]]; then
-	echo "OK, continuing."
-	break
-else
-	echo "Sorry, did not catch that!"
-	continue
-fi
-done
 
 # start build-process
 sudo make all
@@ -128,6 +146,6 @@ wait
 # check if build process was successful
 chExitStatus
 
-# show user last message
-printf "\nThat should be it, lpzrobots is now installed.\nHave a nice day!"
+# show user success message (is also displayed if user cancels build-process)
+printf "\nThat should be it, lpzrobots is now installed.\nHave a nice day!\n"
 exit 0
