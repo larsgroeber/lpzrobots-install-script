@@ -2,7 +2,7 @@
 
 Here you find a small number of unofficial installation-scripts for the [lpzrobots](http://robot.informatik.uni-leipzig.de/software/) environment.
 
-The script is a fancy (or easier) way of doing the following in order:
+The script is a fancy (or easier) way of doing the following in order with some sanity-checks:
 
 	mkdir LpzRobots
 	cd LpzRobots
