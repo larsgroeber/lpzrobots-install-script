@@ -9,6 +9,10 @@ Here you find a small number of (unofficial) installation-scripts for the [lpzro
 3. Run `./install-YOURDISTRO.sh` (you will need root permissions)
 4. Follow the instructions
 
+## ToDos
+
+* scripts for other distributions
+
 ## License and Sources
 
 * Files are provided by the lpzrobots-team: https://github.com/georgmartius/lpzrobots
