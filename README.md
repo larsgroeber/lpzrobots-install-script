@@ -34,6 +34,6 @@ At the end the script checks if the installation was successful by starting one 
 ## License and Sources
 
 * Files are provided by the lpzrobots-team: https://github.com/georgmartius/lpzrobots
-* Instructions for installing were provided by the user [verdooft](https://forum.ubuntuusers.de/topic/e-paket-guilogger-kann-nicht-gefunden-werden/) and [Leon Bonde Larsen](http://manoonpong.com/MOROCO/lpz_guide.txt)
+* Sources for the commands used: User [verdooft](https://forum.ubuntuusers.de/topic/e-paket-guilogger-kann-nicht-gefunden-werden/) and [Leon Bonde Larsen](http://manoonpong.com/MOROCO/lpz_guide.txt)
 
 Code is released under the [MIT-License](https://github.com/Larsg7/lpzrobots-install/blob/master/LICENSE.md).
