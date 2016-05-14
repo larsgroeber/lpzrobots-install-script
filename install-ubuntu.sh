@@ -1,11 +1,14 @@
 #!/bin/bash
 
-# this script downloads and installs
-# 	the lpzrobots-environment
-# 	all necessary packages for compiling and building it
+# This script downloads and installs the lpzrobots-environment and all necessary 
+# packages for compiling, building and running it.
 #
-# more information and the license used can be found here: 
+# more information about the script and the license used can be found here: 
 # https://github.com/Larsg7/lpzrobots-install
+
+
+
+######	Initial setup  ######
 
 
 # first clear the screen
@@ -65,6 +68,10 @@ fi
 done
 
 
+
+######  Downloading the files ######
+
+
 # move into the directory the user has specified
 cd $location
 
@@ -90,6 +97,11 @@ fi
 # move into the correct directory
 cd lpzrobots-master
 
+
+
+######  Installing packages  ######
+
+
 printf "\nMaking sure essentials are installed.\n"
 sudo apt-get update
 # no checking here because "apt-get update" can produce non-critical errors
@@ -110,7 +122,12 @@ chExitStatus
 
 printf "\nAll packages necessary for compiling are now installed.\n"
 
-# ask user if they want to continue with the compile process
+
+
+######  Build/compile program  ######
+
+
+# ask user if they want to continue with the compile-process
 while true; do
 printf "The next command will compile the program, it will take a long time to finish. \nDo you want to continue? (write no/yes)\n"
 
@@ -138,7 +155,7 @@ wait
 # check if make process was successful
 chExitStatus
 
-# start build-process
+# start make-process
 sudo make all
 
 wait
@@ -146,14 +163,19 @@ wait
 # check if build process was successful
 chExitStatus
 
-# make symlink
+# make symlink (otherwise there will be errors)
 sudo ln -sf ${location}/LpzRobots/lpzrobots-master/opende/ode/src/.libs/libode_dbl.so.1 /lib/libode_dbl.so.1
 
 # show user success message (is also displayed if user cancels build-process)
-printf "\nThat should be it, lpzrobots is now installed.\n"
+printf "\nLpzrobots should now be installed.\n"
+
+
+
+######  Check installation  ######
+
 
 while true; do
-printf "Do you want to test if the program is installed correctly? [n/Y]"
+printf "\nDo you want to test if the program is installed correctly? [n/Y]"
 
 read ans
 
@@ -169,7 +191,7 @@ else
 fi
 done
 
-printf "OK, the robot-examble 'basic' will be compiled and started. If there is no error message and a window with a basic robot-simulation opens everything works.\nPlease press ENTER.\n"
+printf "\nOK, the robot-examble 'basic' will be compiled and started. If there is no error message and a window with a basic robot-simulation opens everything works.\nPlease press ENTER.\n"
 
 read ans
 
@@ -191,5 +213,13 @@ wait
 
 chExitStatus
 
-printf "\nHave a nice day!\n"
+printf "\nThat's it! Have a nice day.\n"
+
+sleep 5
+
+
+
+######  End  ######
+
+
 exit 0
