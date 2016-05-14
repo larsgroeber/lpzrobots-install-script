@@ -129,7 +129,7 @@ printf "\nAll packages necessary for compiling are now installed.\n"
 
 # ask user if they want to continue with the compile-process
 while true; do
-printf "The next command will compile the program, it will take a long time to finish. \nDo you want to continue? (write no/yes)\n"
+printf "The next command will compile the program, it will take a long time to finish. \nDo you want to continue? (type no/yes)\n"
 
 read ans
 
@@ -191,7 +191,8 @@ else
 fi
 done
 
-printf "\nOK, the robot-examble 'basic' will be compiled and started. If there is no error message and a window with a basic robot-simulation opens everything works.\nPlease press ENTER.\n"
+printf "\nOk, the robot-example 'basic' will be compiled and started. If there is no error message and a window \
+with a basic robot-simulation opens everything works fine.\nPlease press ENTER.\n"
 
 read ans
 
