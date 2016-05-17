@@ -136,7 +136,7 @@ function testInstall {
 }
 
 function cleanUp {
-	echo "Cleaning up..."
+	printf "\nCleaning up...\n"
 	rm ${1}/LpzRobots/master.zip
 }
 
@@ -193,7 +193,7 @@ fi
 done
 
 # set up the trap for the clean up process
-trap cleanUp $location INT TERM EXIT
+trap "cleanUp $location" EXIT
 
 ######  Downloading the files ######
 
