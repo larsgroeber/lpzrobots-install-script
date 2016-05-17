@@ -140,8 +140,7 @@ function cleanUp {
 	rm ${1}/LpzRobots/master.zip
 }
 
-trap "echo 'Exiting...'; exit 0" INT TERM
-
+trap "printf '\nExiting...\n'; exit 0" INT TERM
 
 
 ######	Initial setup  ######
