@@ -81,10 +81,12 @@ mkdir LpzRobots
 # move into the newly created directory
 cd LpzRobots
 
-printf "Downloading files from github.\n\n"
-wget https://github.com/georgmartius/lpzrobots/archive/master.zip
+printf "Downloading files from github...\n\n"
+wget --quiet https://github.com/georgmartius/lpzrobots/archive/master.zip
 
-printf "Unzipping content.\n\n"
+chExitStatus
+
+printf "Unzipping content...\n\n"
 unzip -q master.zip
 
 # check if directory exists
@@ -102,7 +104,7 @@ cd lpzrobots-master
 ######  Installing packages  ######
 
 
-printf "\nMaking sure essentials are installed.\n"
+printf "\nMaking sure essentials are installed...\n"
 sudo apt-get -qq update
 # no checking here because "apt-get update" can produce non-critical errors
 # e.g. non-critical repository not found
@@ -112,16 +114,14 @@ sudo apt-get install build-essential
 # check if packages "build-essentials" are installed correctly
 chExitStatus
 
-printf "Installing necessary packages for compiling.\n\n"
-sleep 1
+printf "\nInstalling necessary packages for compiling...\n"
+sleep 2
 sudo apt-get install g++ make automake libtool xutils-dev m4 libreadline-dev libgsl0-dev \
 libglu-dev libgl1-mesa-dev freeglut3-dev libopenscenegraph-dev libqt4-dev libqt4-opengl \
 libqt4-opengl-dev qt4-qmake libqt4-qt3support gnuplot gnuplot-x11 libncurses5-dev
 
 # check if all packages were installed correctly
 chExitStatus
-
-clear
 
 printf "\nAll packages necessary for compiling are now installed.\n"
 
