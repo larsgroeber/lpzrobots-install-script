@@ -140,6 +140,7 @@ function cleanUp {
 	rm ${1}/LpzRobots/master.zip
 }
 
+trap "echo 'Exiting...'; exit 0" INT TERM
 
 
 
