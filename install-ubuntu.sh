@@ -85,7 +85,7 @@ printf "Downloading files from github.\n\n"
 wget https://github.com/georgmartius/lpzrobots/archive/master.zip
 
 printf "Unzipping content.\n\n"
-unzip master.zip
+unzip -q master.zip
 
 # check if directory exists
 if [[ ! -e lpzrobots-master ]]; then
@@ -103,7 +103,7 @@ cd lpzrobots-master
 
 
 printf "\nMaking sure essentials are installed.\n"
-sudo apt-get update
+sudo apt-get -qq update
 # no checking here because "apt-get update" can produce non-critical errors
 # e.g. non-critical repository not found
 
@@ -113,12 +113,15 @@ sudo apt-get install build-essential
 chExitStatus
 
 printf "Installing necessary packages for compiling.\n\n"
+sleep 1
 sudo apt-get install g++ make automake libtool xutils-dev m4 libreadline-dev libgsl0-dev \
 libglu-dev libgl1-mesa-dev freeglut3-dev libopenscenegraph-dev libqt4-dev libqt4-opengl \
 libqt4-opengl-dev qt4-qmake libqt4-qt3support gnuplot gnuplot-x11 libncurses5-dev
 
 # check if all packages were installed correctly
 chExitStatus
+
+clear
 
 printf "\nAll packages necessary for compiling are now installed.\n"
 
@@ -138,7 +141,7 @@ if [[ $ans == "no" ]]; then
 	echo "Exiting."
 	exit 0
 elif [[ $ans == "yes" ]]; then
-	printf "OK, continuing.\n\n"
+	printf "\nOK, continuing.\n\n"
 	break
 else
 	printf "Sorry, did not catch that!\n\n"
@@ -148,6 +151,11 @@ done
 
 
 printf "\nStarting the make-process.\n"	
+sleep 1
+
+# start timer
+START=$(date +%s.%N)
+
 make
 
 wait
@@ -163,11 +171,17 @@ wait
 # check if build process was successful
 chExitStatus
 
+# end timer
+END=$(date +%s.%N)
+
 # make symlink (otherwise there will be errors)
 sudo ln -sf ${location}/LpzRobots/lpzrobots-master/opende/ode/src/.libs/libode_dbl.so.1 /lib/libode_dbl.so.1
 
+# calculate difference
+DIFF=$(echo "($END - $START)/60.0" | bc)
+
 # show user success message (is also displayed if user cancels build-process)
-printf "\nLpzrobots should now be installed.\n"
+printf "\nLpzrobots should now be installed (the make-process took $DIFF minutes).\n"
 
 
 
