@@ -1,15 +1,149 @@
 #!/bin/bash
 
+
 # This script downloads and installs the lpzrobots-environment and all necessary 
 # packages for compiling, building and running it.
 #
 # more information about the script and the license used can be found here: 
-# https://github.com/Larsg7/lpzrobots-install
+# https://github.com/Larsg7/lpzrobots-install-script
 
 
+# small function to check exit-status
+function chExitStatus {
+	if [[ ! $? -eq 0 ]]; then
+	printf "\nSomething went wrong while running the last command. - Exiting\n"
+	exit 1
+fi
+}
+
+function installPackages {
+	printf "\nMaking sure essentials are installed...\n"
+	sudo apt-get -qq update # quiet-mode
+	# no checking here because "apt-get update" can produce non-critical errors
+	# e.g. non-critical repository not found
+
+	sudo apt-get install build-essential
+
+	# check if packages "build-essentials" are installed correctly
+	chExitStatus
+
+	printf "\nInstalling necessary packages for compiling...\n"
+	sleep 2
+	sudo apt-get install g++ make automake libtool xutils-dev m4 libreadline-dev libgsl0-dev \
+	libglu-dev libgl1-mesa-dev freeglut3-dev libopenscenegraph-dev libqt4-dev libqt4-opengl \
+	libqt4-opengl-dev qt4-qmake libqt4-qt3support gnuplot gnuplot-x11 libncurses5-dev
+
+	# check if all packages were installed correctly
+	chExitStatus
+
+	printf "\nAll packages necessary for compiling are now installed.\n"
+}
+
+function makeProgram {
+	# call with location of files as first argument!
+
+	printf "\nStarting the make-process.\n"	
+	sleep 1
+
+	# start timer
+	START=$(date +%s.%N)
+
+	make
+
+	wait
+
+	# check if make process was successful
+	chExitStatus
+
+	# start make-process
+	sudo make all
+
+	wait
+
+	# check if build process was successful
+	chExitStatus
+
+	# end timer
+	END=$(date +%s.%N)
+
+	# make symlink (otherwise there will be errors)
+	sudo ln -sf ${1}/LpzRobots/lpzrobots-master/opende/ode/src/.libs/libode_dbl.so.1 /lib/libode_dbl.so.1
+
+	# calculate difference
+	DIFF=$(echo "($END - $START)" | bc)
+
+	# show user success message (is also displayed if user cancels build-process)
+	printf "\nLpzrobots should now be installed (the make-process took $DIFF seconds).\n"
+}
+
+function getFiles {
+	# call with location of files as first argument!
+
+	# move into the directory the user has specified
+	cd $1
+
+	# make directory LpzRobots (exits with error if directory already exists)
+	mkdir LpzRobots
+
+	# move into the newly created directory
+	cd LpzRobots
+
+	printf "Downloading files from github...\n\n"
+	wget --quiet https://github.com/georgmartius/lpzrobots/archive/master.zip
+
+	chExitStatus
+
+	printf "Unzipping content...\n\n"
+	unzip -q master.zip
+
+	# check if directory exists
+	if [[ ! -e lpzrobots-master ]]; then
+		printf "\nSorry, something went wrong downloading or unzipping the files \
+	('lpzrobots-master'-directory does not exist). - ABORT\n"
+		exit 1
+	fi
+
+	# move into the correct directory
+	cd lpzrobots-master
+}
+
+function testInstall {
+	# call with location of files as first argument!
+
+	printf "\nOk, the robot-example 'basic' will be compiled and started. If there is no error message and a window \
+	with a basic robot-simulation opens everything works fine.\nPlease press ENTER.\n"
+
+	# wait for user to press ENTER
+	read ans
+
+	# enter basic-example directory
+	cd ${1}/LpzRobots/lpzrobots-master/ode_robots/examples/basic
+
+	chExitStatus
+
+	# compile the example
+	make
+
+	chExitStatus
+
+	# start the example
+	${1}/LpzRobots/lpzrobots-master/ode_robots/examples/basic/start
+
+	# wait for simulation to end
+	wait 
+
+	chExitStatus
+}
+
+function cleanUp {
+	echo "Cleaning up..."
+	rm ${1}/LpzRobots/master.zip
+}
+
+# set up the trap for the clean up process
+trap "cleanUp $location" INT TERM EXIT
 
 ######	Initial setup  ######
-
 
 # first clear the screen
 clear
@@ -19,15 +153,6 @@ printf "\nThis script will download and install the lpzrobots-environment for yo
 printf "It has been tested on Ubuntu 14.04. Default values are in '[]' and/or capitalized, \
 just press ENTER to use them.\n\n"
 printf "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND.\n"
-
-
-# small function to check exit-status ToDo: show last command
-function chExitStatus {
-	if [[ ! $? -eq 0 ]]; then
-	printf "\nSomething went wrong while running the last command. - ABORT\n"
-	exit 1
-fi
-}
 
 # ask the user in which directory the files should go
 while true; do
@@ -68,67 +193,17 @@ fi
 done
 
 
-
 ######  Downloading the files ######
 
-
-# move into the directory the user has specified
-cd $location
-
-# make directory LpzRobots (exits with error if directory already exists)
-mkdir LpzRobots
-
-# move into the newly created directory
-cd LpzRobots
-
-printf "Downloading files from github...\n\n"
-wget --quiet https://github.com/georgmartius/lpzrobots/archive/master.zip
-
-chExitStatus
-
-printf "Unzipping content...\n\n"
-unzip -q master.zip
-
-# check if directory exists
-if [[ ! -e lpzrobots-master ]]; then
-	printf "\nSorry, something went wrong downloading or unzipping the files \
-('lpzrobots-master'-directory does not exist). - ABORT\n"
-	exit 1
-fi
-
-# move into the correct directory
-cd lpzrobots-master
-
+getFiles $location
 
 
 ######  Installing packages  ######
 
-
-printf "\nMaking sure essentials are installed...\n"
-sudo apt-get -qq update
-# no checking here because "apt-get update" can produce non-critical errors
-# e.g. non-critical repository not found
-
-sudo apt-get install build-essential
-
-# check if packages "build-essentials" are installed correctly
-chExitStatus
-
-printf "\nInstalling necessary packages for compiling...\n"
-sleep 2
-sudo apt-get install g++ make automake libtool xutils-dev m4 libreadline-dev libgsl0-dev \
-libglu-dev libgl1-mesa-dev freeglut3-dev libopenscenegraph-dev libqt4-dev libqt4-opengl \
-libqt4-opengl-dev qt4-qmake libqt4-qt3support gnuplot gnuplot-x11 libncurses5-dev
-
-# check if all packages were installed correctly
-chExitStatus
-
-printf "\nAll packages necessary for compiling are now installed.\n"
-
+installPackages
 
 
 ######  Build/compile program  ######
-
 
 # ask user if they want to continue with the compile-process
 while true; do
@@ -142,6 +217,7 @@ if [[ $ans == "no" ]]; then
 	exit 0
 elif [[ $ans == "yes" ]]; then
 	printf "\nOK, continuing.\n\n"
+	makeProgram $location
 	break
 else
 	printf "Sorry, did not catch that!\n\n"
@@ -150,43 +226,7 @@ fi
 done
 
 
-printf "\nStarting the make-process.\n"	
-sleep 1
-
-# start timer
-START=$(date +%s.%N)
-
-make
-
-wait
-
-# check if make process was successful
-chExitStatus
-
-# start make-process
-sudo make all
-
-wait
-
-# check if build process was successful
-chExitStatus
-
-# end timer
-END=$(date +%s.%N)
-
-# make symlink (otherwise there will be errors)
-sudo ln -sf ${location}/LpzRobots/lpzrobots-master/opende/ode/src/.libs/libode_dbl.so.1 /lib/libode_dbl.so.1
-
-# calculate difference
-DIFF=$(echo "($END - $START)/60.0" | bc)
-
-# show user success message (is also displayed if user cancels build-process)
-printf "\nLpzrobots should now be installed (the make-process took $DIFF minutes).\n"
-
-
-
 ######  Check installation  ######
-
 
 while true; do
 printf "\nDo you want to test if the program is installed correctly? [n/Y]"
@@ -195,9 +235,9 @@ read ans
 
 # again check answer
 if [[ $ans == "n" ]]; then
-	printf "Ok, exiting. Have a nice day!\n"
-	exit 0
+	break
 elif [[ $ans == "Y" || $ans == "y" || -z $ans ]]; then
+	testInstall $location
 	break
 else
 	printf "Sorry, did not catch that!\n\n"
@@ -205,36 +245,8 @@ else
 fi
 done
 
-printf "\nOk, the robot-example 'basic' will be compiled and started. If there is no error message and a window \
-with a basic robot-simulation opens everything works fine.\nPlease press ENTER.\n"
-
-# wait for user to press ENTER
-read ans
-
-# enter basic-example directory
-cd ${location}/LpzRobots/lpzrobots-master/ode_robots/examples/basic
-
-chExitStatus
-
-# compile the example
-make
-
-chExitStatus
-
-# start the example
-${location}/LpzRobots/lpzrobots-master/ode_robots/examples/basic/start
-
-# wait for simulation to end
-wait 
-
-chExitStatus
 
 printf "\nThat's it! Have a nice day.\n"
-
-sleep 5
-
-
-# ToDo: clean up .zip files?
 
 
 ######  End  ######
