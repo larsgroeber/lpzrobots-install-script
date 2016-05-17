@@ -138,10 +138,11 @@ function testInstall {
 function cleanUp {
 	echo "Cleaning up..."
 	rm ${1}/LpzRobots/master.zip
+	exit 0
 }
 
 # set up the trap for the clean up process
-trap "cleanUp $location" INT TERM EXIT
+trap "cleanUp ${location}" INT TERM EXIT
 
 ######	Initial setup  ######
 
