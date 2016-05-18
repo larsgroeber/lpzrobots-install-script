@@ -45,6 +45,9 @@ function makeProgram {
 	printf "\nStarting the make-process.\n"	
 	sleep 1
 
+	# make symlink (otherwise there will be errors)
+	sudo ln -sf ${1}/LpzRobots/lpzrobots-master/opende/ode/src/.libs/libode_dbl.so.1 /lib/libode_dbl.so.1
+
 	# start timer
 	START=$(date +%s.%N)
 
@@ -65,9 +68,6 @@ function makeProgram {
 
 	# end timer
 	END=$(date +%s.%N)
-
-	# make symlink (otherwise there will be errors)
-	sudo ln -sf ${1}/LpzRobots/lpzrobots-master/opende/ode/src/.libs/libode_dbl.so.1 /lib/libode_dbl.so.1
 
 	# calculate difference
 	DIFF=$(echo "($END - $START)" | bc)
