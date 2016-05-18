@@ -2,7 +2,7 @@
 
 Here you find a small number of unofficial installation-scripts for the [lpzrobots](http://robot.informatik.uni-leipzig.de/software/) environment.
 
-The script is a fancy way of doing the following in order including some sanity-checks:
+The script is a fancy way of doing the following in order including sanity-checks:
 
 	mkdir LpzRobots
 	cd LpzRobots
@@ -15,7 +15,7 @@ The script is a fancy way of doing the following in order including some sanity-
 	libglu-dev libgl1-mesa-dev freeglut3-dev libopenscenegraph-dev libqt4-dev libqt4-opengl \
 	libqt4-opengl-dev qt4-qmake libqt4-qt3support gnuplot gnuplot-x11 libncurses5-dev
 	make
-	sudo make all
+	sudo make all # this is where the magic happens, all credit goes to the lpzrobots-team
 	sudo ln -sf PATH-TO-LpzRobots/lpzrobots-master/opende/ode/src/.libs/libode_dbl.so.1 /lib/libode_dbl.so.1
 
 At the end the script checks if the installation was successful by starting one of the examples included with the lpzrobots-files.
