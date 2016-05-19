@@ -49,12 +49,13 @@ function installPackages {
 
 function makeProgram {
 	# call with location of files as first argument!
+
 	# replace installation location for easier install w/o sudo
 	#sed -i "s/{1:-\/usr\/local}/{1:-\/home\/${USER}\/Documents}/g" createMakefile.conf.sh
 	#sed -i "s/Please use either \/usr, \/usr\/local  or you home directory/Please use either \/home\/${USER}\/Documents or your home directory/g" createMakefile.conf.sh
 	
 	# taken directly form the createMakefile.conf.sh-File
-	$prefix=${1:-/home/$USER}
+	prefix="/home/$USER"
 	export PATH=$prefix/bin:$PATH
 
 	chExitStatus
@@ -106,24 +107,24 @@ function getFiles {
 	# move into the directory the user has specified
 	cd $1
 
-	# make directory LpzRobots (exits with error if directory already exists)
-	mkdir LpzRobots
+	# make directory LpzRobots
+	if [[ ! -d LpzRobots ]]; then mkdir LpzRobots; fi
 
 	# move into the newly created directory
 	cd LpzRobots
 
-	printf "Getting files from github...\n\n"
+	printf "Getting files from github...\n"
 	wget --quiet https://github.com/georgmartius/lpzrobots/archive/master.zip
 
 	chExitStatus
 
-	printf "Unzipping content...\n\n"
+	printf "Unzipping content...\n"
 	unzip -q master.zip
 
 	# check if directory exists
 	if [[ ! -e lpzrobots-master ]]; then
 		printf "\nSorry, something went wrong downloading or unzipping the files \
-	('lpzrobots-master'-directory does not exist). - ABORT\n"
+	('lpzrobots-master'-directory does not exist). - Exiting\n"
 		exit 1
 	fi
 
@@ -161,7 +162,7 @@ function testInstall {
 
 function cleanUp {
 	printf "\nCleaning up...\n"
-	rm ${1}/LpzRobots/master.zip
+	if [[ -e ${1}/LpzRobots/master.zip ]];then rm ${1}/LpzRobots/master.zip; fi
 }
 
 trap "printf '\nExiting...\n'; exit 1" INT TERM
@@ -179,24 +180,26 @@ just press ENTER to use them.\n"
 printf "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND.\n"
 
 # ask the user in which directory the files should go
-while true; do
-printf "\nIn which directory should the program be downloaded and compiled? ('/LpzRobots' \
-will be added to the end of the path, don't use '~') [/home/${USER}/Downloads]\n"
+while :
+do
+	defLoc="/home/${USER}"
+	printf "\nIn which directory should the program be downloaded and compiled? ('/LpzRobots' \
+	will be added to the end of the path, don't use '~') [$defLoc]\n"
 
-# read the answer from the command line
-read location
+	# read the answer from the command line
+	read location
 
-# if location is empty take default value otherwise just keep the input
-if [[ -z $location ]]; then	location="/home/${USER}/Downloads"; fi
+	# if location is empty take default value otherwise just keep the input
+	if [[ -z $location ]]; then	location=$defLoc; fi
 
-# check if $location exists, is a directory and if we have read/write access
-if [[ ! -d $location || ! -w $location ]]; then
-	printf "Directory does not exist or you do not have read/write-access! \nChoose another one.\n"
-	continue
-else
-	printf "\nThe lpzrobots-files will now be downloaded into the directory ${location}/LpzRobots.\n"
-	break
-fi
+	# check if $location exists, is a directory and if we have read/write access
+	if [[ ! -d $location || ! -w $location ]]; then
+		printf "Directory does not exist or you do not have read/write-access! \nChoose another one.\n"
+		continue
+	else
+		printf "\nThe lpzrobots-files will now be downloaded into the directory ${location}/LpzRobots.\n"
+		break
+	fi
 done
 
 # set up the trap for the clean up process
@@ -219,23 +222,12 @@ makeProgram $location
 
 ######  Check installation  ######
 
-while true; do
 printf "\nDo you want to test if the program is installed correctly? [n/Y]"
 
 read ans
 
 # again check answer
-if [[ $ans == "n" ]]; then
-	break
-elif [[ $ans == "Y" || $ans == "y" || -z $ans ]]; then
-	testInstall $location
-	break
-else
-	printf "Sorry, did not catch that!\n\n"
-	continue
-fi
-done
-
+if [[ $ans == "Y" || $ans == "y" || -z $ans ]]; then testInstall $location; fi
 
 printf "\nThat's it! Have a nice day.\n"
 
