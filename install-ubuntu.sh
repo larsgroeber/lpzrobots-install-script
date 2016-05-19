@@ -27,7 +27,7 @@ function installPackages {
 
 	for name in ${pkg[*]}; do
 		printf "Checking if $name is installed..."
-		if ! dpkg -s $name > /dev/null; then
+		if ! dpkg -s $name 2> /dev/null 1> /dev/null; then
 			toInstall+=( $name )
 			printf " - No\n"
 			continue
@@ -35,7 +35,7 @@ function installPackages {
 		printf " - Ok\n"
 	done
 
-	if [[ -z '$toInstall' ]]; then
+	if [[ ! -z '$toInstall' ]]; then
 		printf "\nInstalling necessary packages for compiling...\n"
 		sudo apt-get -qq update # quiet-mode
 
