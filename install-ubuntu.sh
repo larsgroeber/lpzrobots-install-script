@@ -35,7 +35,7 @@ function installPackages {
 		printf " - Ok\n"
 	done
 
-	if [[ ! -z '$toInstall' ]]; then
+	if [[ ! -z $toInstall ]]; then
 		printf "\nInstalling necessary packages for compiling...\n"
 		sudo apt-get -qq update # quiet-mode
 
