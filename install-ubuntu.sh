@@ -50,26 +50,25 @@ function installPackages {
 function makeProgram {
 	# call with location of files as first argument!
 	# replace installation location for easier install w/o sudo
-	sed -i "s/\/usr\/local /\/home\/${USER}\/Documents/g" createMakefile.conf.sh
-	sed -i "s/\/usr, //g" createMakefile.conf.sh
+	#sed -i "s/{1:-\/usr\/local}/{1:-\/home\/${USER}\/Documents}/g" createMakefile.conf.sh
+	#sed -i "s/Please use either \/usr, \/usr\/local  or you home directory/Please use either \/home\/${USER}\/Documents or your home directory/g" createMakefile.conf.sh
 	
+	# taken directly form the createMakefile.conf.sh-File
+	$prefix=${1:-/home/$USER}
+	export PATH=$prefix/bin:$PATH
+
+	echo "PREFIX=$prefix" >> Makefile.conf
+	echo "TYPE=DEVEL" >> Makefile.conf
+	echo "#define PREFIX \"$prefix\"" >> ode_robots/install_prefix.conf
+
 	printf "\nStarting the make-process.\n"	
 	sleep 1
 
 	# start timer
 	START=$(date +%s.%N)
 
-	make
-
-	wait
-
-	# check if make process was successful
-	chExitStatus
-
 	# start make-process
 	make all
-
-	wait
 
 	# check if build process was successful
 	chExitStatus
