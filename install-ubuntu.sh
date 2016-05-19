@@ -57,9 +57,23 @@ function makeProgram {
 	$prefix=${1:-/home/$USER}
 	export PATH=$prefix/bin:$PATH
 
+	chExitStatus
+
+	# taken directly form createMakefile.conf.sh
+	echo -e "# configuration file for lpzrobots (automatically generated!)\n\
+	# Where to install the simulator and utils"  > Makefile.conf
 	echo "PREFIX=$prefix" >> Makefile.conf
+	echo -e "\n# user or developement installation\n\
+	# Options:\n\
+	#  DEVEL: only install the utility functions,\n\
+	#   which is useful for development on the simulator\n\
+	#  USER: install also the ode_robots and selforg libaries and include files\n\
+	#   this is recommended for users" >> Makefile.conf
 	echo "TYPE=DEVEL" >> Makefile.conf
+
+	echo "// Automatically generated file! Use make conf in lpzrobots." > ode_robots/install_prefix.conf
 	echo "#define PREFIX \"$prefix\"" >> ode_robots/install_prefix.conf
+
 
 	printf "\nStarting the make-process.\n"	
 	sleep 1
@@ -200,9 +214,6 @@ installPackages
 
 ######  Build/compile program  ######
 
-# start make-process
-printf "Starting the make-process\n"
-sleep 1
 makeProgram $location
 
 
