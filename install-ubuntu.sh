@@ -57,7 +57,8 @@ function makeProgram {
 	# taken directly form the createMakefile.conf.sh-File
 	prefix="/home/$USER"
 	export PATH=$prefix/bin:$PATH
-
+	export LD_LIBRARY_PATH=$prefix/lib
+	
 	chExitStatus
 
 	# taken directly form createMakefile.conf.sh
