@@ -18,30 +18,41 @@ fi
 
 function installPackages {
 	printf "\nMaking sure essentials are installed...\n"
-	sudo apt-get -qq update # quiet-mode
-	# no checking here because "apt-get update" can produce non-critical errors
-	# e.g. non-critical repository not found
 
-	sudo apt-get install build-essential
+	pkg=( g++ make automake libtool xutils-dev m4 libreadline-dev libgsl-dev \
+	libglu1-mesa-dev libgl1-mesa-dev freeglut3-dev libopenscenegraph-dev libqt4-dev libqt4-opengl \
+	libqt4-opengl-dev qt4-qmake libqt4-qt3support gnuplot gnuplot-x11 libncurses5-dev )
 
-	# check if packages "build-essentials" are installed correctly
-	chExitStatus
+	toInstall=()
 
-	printf "\nInstalling necessary packages for compiling...\n"
-	sleep 2
-	sudo apt-get install g++ make automake libtool xutils-dev m4 libreadline-dev libgsl0-dev \
-	libglu-dev libgl1-mesa-dev freeglut3-dev libopenscenegraph-dev libqt4-dev libqt4-opengl \
-	libqt4-opengl-dev qt4-qmake libqt4-qt3support gnuplot gnuplot-x11 libncurses5-dev
+	for name in ${pkg[*]}; do
+		printf "Checking if $name is installed..."
+		if ! dpkg -s $name > /dev/null; then
+			toInstall+=( $name )
+			printf " - No\n"
+			continue
+		fi
+		printf " - Ok\n"
+	done
 
-	# check if all packages were installed correctly
-	chExitStatus
+	if [[ -z '$toInstall' ]]; then
+		printf "\nInstalling necessary packages for compiling...\n"
+		sudo apt-get -qq update # quiet-mode
 
-	printf "\nAll packages necessary for compiling are now installed.\n"
+		sudo apt-get install ${toInstall[*]}
+
+		chExitStatus
+
+		printf "\nAll packages necessary for compiling are installed.\n"
+	fi	
 }
 
 function makeProgram {
 	# call with location of files as first argument!
-
+	# replace installation location for easier install w/o sudo
+	sed -i "s/\/usr\/local /\/home\/${USER}\/Documents/g" createMakefile.conf.sh
+	sed -i "s/\/usr, //g" createMakefile.conf.sh
+	
 	printf "\nStarting the make-process.\n"	
 	sleep 1
 
@@ -56,7 +67,7 @@ function makeProgram {
 	chExitStatus
 
 	# start make-process
-	sudo make all
+	make all
 
 	wait
 
@@ -67,7 +78,7 @@ function makeProgram {
 	END=$(date +%s.%N)
 
 	# make symlink (otherwise there will be errors)
-	sudo ln -sf ${1}/LpzRobots/lpzrobots-master/opende/ode/src/.libs/libode_dbl.so.1 /lib/libode_dbl.so.1
+	#sudo ln -sf ${1}/LpzRobots/lpzrobots-master/opende/ode/src/.libs/libode_dbl.so.1 /lib/libode_dbl.so.1
 
 	# calculate difference
 	DIFF=$(echo "($END - $START)" | bc)
@@ -88,7 +99,7 @@ function getFiles {
 	# move into the newly created directory
 	cd LpzRobots
 
-	printf "Downloading files from github...\n\n"
+	printf "Getting files from github...\n\n"
 	wget --quiet https://github.com/georgmartius/lpzrobots/archive/master.zip
 
 	chExitStatus
@@ -140,7 +151,7 @@ function cleanUp {
 	rm ${1}/LpzRobots/master.zip
 }
 
-trap "printf '\nExiting...\n'; exit 0" INT TERM
+trap "printf '\nExiting...\n'; exit 1" INT TERM
 
 
 ######	Initial setup  ######
@@ -149,9 +160,9 @@ trap "printf '\nExiting...\n'; exit 0" INT TERM
 clear
 
 # display some information about the program to the user
-printf "\nThis script will download and install the lpzrobots-environment for you.\n\n"
-printf "It has been tested on Ubuntu 14.04. Default values are in '[]' and/or capitalized, \
-just press ENTER to use them.\n\n"
+printf "\nThis script will download and install the lpzrobots-environment for you.\n"
+printf "It has been tested on Ubuntu 14.04 and 16.04. Default values are in '[]' and/or capitalized, \
+just press ENTER to use them.\n"
 printf "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND.\n"
 
 # ask the user in which directory the files should go
@@ -163,33 +174,16 @@ will be added to the end of the path, don't use '~') [/home/${USER}/Downloads]\n
 read location
 
 # if location is empty take default value otherwise just keep the input
-if [[ -z $location ]]; then
-	location="/home/${USER}/Downloads"
-fi
+if [[ -z $location ]]; then	location="/home/${USER}/Downloads"; fi
 
 # check if $location exists, is a directory and if we have read/write access
 if [[ ! -d $location || ! -w $location ]]; then
 	printf "Directory does not exist or you do not have read/write-access! \nChoose another one.\n"
 	continue
-fi
-
-# ask user for confirmation
-printf "\nThe lpzrobots-files will now be downloaded into the directory ${location}/LpzRobots.\nIs this OK? [n/Y]\n"
-
-read ans
-
-# check answer
-if [[ $ans == "n" ]]; then
-	echo
-	continue
-elif [[ $ans == "" || $ans == "Y" ]]; then
-	printf "OK, continuing.\n"
-	break
 else
-	printf "Sorry, did not catch that!\n\n"
-	continue
+	printf "\nThe lpzrobots-files will now be downloaded into the directory ${location}/LpzRobots.\n"
+	break
 fi
-
 done
 
 # set up the trap for the clean up process
@@ -207,25 +201,10 @@ installPackages
 
 ######  Build/compile program  ######
 
-# ask user if they want to continue with the compile-process
-while true; do
-printf "The next command will compile the program, it will take a long time to finish. \nDo you want to continue? (type no/yes)\n"
-
-read ans
-
-# again check answer
-if [[ $ans == "no" ]]; then
-	echo "Exiting."
-	exit 0
-elif [[ $ans == "yes" ]]; then
-	printf "\nOK, continuing.\n\n"
-	makeProgram $location
-	break
-else
-	printf "Sorry, did not catch that!\n\n"
-	continue
-fi
-done
+# start make-process
+printf "Starting the make-process\n"
+sleep 1
+makeProgram $location
 
 
 ######  Check installation  ######
