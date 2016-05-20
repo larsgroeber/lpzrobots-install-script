@@ -19,7 +19,7 @@ fi
 function installPackages {
 	printf "\nMaking sure essentials are installed...\n"
 
-	pkg=( g++ make automake libtool xutils-dev m4 libreadline-dev libgsl-dev \
+	pkg=( g++ make automake libtool xutils-dev m4 libreadline-dev libgsl0-dev \
 	libglu1-mesa-dev libgl1-mesa-dev freeglut3-dev libopenscenegraph-dev libqt4-dev libqt4-opengl \
 	libqt4-opengl-dev qt4-qmake libqt4-qt3support gnuplot gnuplot-x11 libncurses5-dev )
 
