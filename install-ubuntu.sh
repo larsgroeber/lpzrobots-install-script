@@ -54,10 +54,21 @@ function makeProgram {
 	#sed -i "s/{1:-\/usr\/local}/{1:-\/home\/${USER}\/Documents}/g" createMakefile.conf.sh
 	#sed -i "s/Please use either \/usr, \/usr\/local  or you home directory/Please use either \/home\/${USER}\/Documents or your home directory/g" createMakefile.conf.sh
 	
-	# taken directly form the createMakefile.conf.sh-File
-	prefix="/home/$USER"
-	export PATH=$prefix/bin:$PATH
-	export LD_LIBRARY_PATH=$prefix/lib
+	# taken directly form the installation script by Bulcsu and Hendrik
+	if [[ `echo $PATH | grep "/home/$USER/bin"` && `echo $LD_LIBRARY_PATH | grep "/home/$USER/lib"` ]] ; then
+		# case: already in path
+		echo "not neccessary..."
+	else
+		# case: not yet in path
+		# write to .bashrc to set paths for further sessions
+		echo "adding paths to rc-file"
+		printf "\n\n# adding path variables for LPZrobots package\n" >> .bashrc
+		printf "export PATH=/home/$USER/bin:$PATH\n" >> .bashrc
+		printf "export LD_LIBRARY_PATH=/home/$USER/lib\n" >> .bashrc
+		# directly export to path for current session
+		export PATH=/home/$USER/bin:$PATH
+		export LD_LIBRARY_PATH=/home/$USER/lib
+	fi
 	
 	chExitStatus
 
