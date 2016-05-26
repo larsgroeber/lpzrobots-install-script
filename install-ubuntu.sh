@@ -63,9 +63,9 @@ function makeProgram {
 		# case: not yet in path
 		# write to .bashrc to set paths for further sessions
 		echo "adding paths to rc-file"
-		printf "\n\n# adding path variables for LPZrobots package\n" >> .bashrc
-		printf "export PATH=$prefix/bin:$PATH\n" >> .bashrc
-		printf "export LD_LIBRARY_PATH=$prefix/lib\n" >> .bashrc
+		printf "\n\n# adding path variables for LPZrobots package\n" >> /home/$USER/.bashrc
+		printf "export PATH=$prefix/bin:$PATH\n" >> /home/$USER/.bashrc
+		printf "export LD_LIBRARY_PATH=$prefix/lib\n" >> /home/$USER/.bashrc
 		# directly export to path for current session
 		export PATH=$prefix/bin:$PATH
 		export LD_LIBRARY_PATH=$prefix/lib
