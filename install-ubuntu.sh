@@ -242,7 +242,7 @@ read ans
 # again check answer
 if [[ $ans == "Y" || $ans == "y" || -z $ans ]]; then testInstall $location; fi
 
-printf "\nThat's it! Have a nice day.\n"
+printf "\nThat's it! You may have to close and reopen your terminal window before running any further simulations.\nHave a nice day.\n"
 
 
 ######  End  ######
